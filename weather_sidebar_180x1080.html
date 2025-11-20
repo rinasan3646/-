@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Weather Sidebar 180x1080</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    width: 180px;
+    height: 1080px;
+    background: #101820;
+    color: #ffffff;
+    font-family: sans-serif;
+    overflow: hidden;
+  }
+  .section {
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+  }
+  #today { font-size: 20px; }
+  #icon { margin: 10px 0; }
+  #temp { font-size: 26px; font-weight: bold; }
+  #desc { font-size: 14px; opacity: 0.8; }
+</style>
+</head>
+<body>
+
+<div class="section" id="today">--:--</div>
+<div class="section">
+  <img id="icon" src="" width="90">
+</div>
+<div class="section" id="temp">--°C / --°C</div>
+<div class="section" id="desc">---</div>
+
+<script>
+  const API_KEY = "YOUR_OPENWEATHER_API_KEY";
+  const CITY_ID = "YOUR_CITY_ID";  // Example: Tokyo = 1850147
+
+  async function updateWeather() {
+    try {
+      const url = `https://api.openweathermap.org/data/2.5/weather?id=${CITY_ID}&appid=${API_KEY}&lang=ja&units=metric`;
+      const res = await fetch(url);
+      const data = await res.json();
+
+      document.getElementById("today").textContent =
+        new Date().toLocaleDateString("ja-JP", { month: "numeric", day: "numeric" });
+
+      document.getElementById("icon").src =
+        `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+
+      document.getElementById("temp").textContent =
+        `${Math.round(data.main.temp_max)}°C / ${Math.round(data.main.temp_min)}°C`;
+
+      document.getElementById("desc").textContent =
+        data.weather[0].description;
+
+    } catch (e) {
+      console.log("エラー:", e);
+    }
+  }
+
+  updateWeather();
+  setInterval(updateWeather, 10 * 60 * 1000); // 10分ごと更新
+</script>
+
+</body>
+</html>
